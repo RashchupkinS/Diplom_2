@@ -6,7 +6,7 @@ import random
 import string
 from urls import Urls
 from faker import Faker
-from data import email_domains, TestMessages #  color_selection, , EXCLUDE_PARAMETERS,
+from data import email_domains, TestMessages, EXCLUDE_PARAMETERS #  color_selection, ,,
 
 
 
@@ -88,16 +88,16 @@ class User:
     def register_user(user_data):
         response = requests.post(url=Urls.CREATE_USER, json=user_data)
         return response
-#
-#
-#     # статический метод исключает заданную пару ключ-значение из регистрационных данных
-#     @staticmethod
-#     def excludes_parameter_from_courier_registration_data(registered_courier_data, exclude):
-#         data_copy = copy.deepcopy(registered_courier_data)
-#         del data_copy[exclude]
-#         return data_copy
-#
-#
+
+
+    # статический метод исключает заданную пару ключ-значение из регистрационных данных
+    @staticmethod
+    def excludes_parameter_from_user_registration_data(registered_user_data, exclude):
+        data_copy = copy.deepcopy(registered_user_data)
+        del data_copy[exclude]
+        return data_copy
+
+
 #     # статический метод изменяет значение регистрационных данных по ключу(исключает последний символ)
 #     @staticmethod
 #     def change_parameter_value_in_courier_registration_data(registered_courier_data, change):
@@ -106,25 +106,28 @@ class User:
 #         return data_copy
 #
 #
-#     # статический метод авторизует курьера
-#     @staticmethod
-#     @allure.step('Авторизация курьера')
-#     def login_courier(registered_courier_data):
-#         del registered_courier_data[EXCLUDE_PARAMETERS["firstName"]]
-#         response = requests.post(url=Urls.LOGIN_COURIER, json=registered_courier_data)
-#         return response
-#
-#
-#     # статический метод удаляет курьера после теста
-#     @staticmethod
-#     @allure.step('Удаление курьера')
-#     def delete_courier(registered_courier_data):
-#         response = Courier.login_courier(registered_courier_data)
-#         if response.status_code == TestMessages.COURIER_SUCCESSFUL_AUTHORIZATION["code"]:
-#             courier_id = response.json()["id"]
-#             requests.delete(f"{Urls.DELETE_COURIER}{courier_id}")
-#
-#
+    # статический метод авторизует курьера
+    @staticmethod
+    @allure.step('Авторизация пользователя')
+    def login_user(registered_user_data):
+        del registered_user_data[EXCLUDE_PARAMETERS["name"]]
+        response = requests.post(url=Urls.LOGIN_USER, json=registered_user_data)
+        return response
+
+
+    # статический метод удаляет курьера после теста
+    @staticmethod
+    @allure.step('Удаление пользователя')
+    def delete_user(registered_user_data):
+        response = User.login_user(registered_user_data)
+        if response.status_code == TestMessages.USER_SUCCESSFUL_AUTHORIZATION["code"]:
+            user_access_token = response.json()["accessToken"]
+            header = {"Authorization": user_access_token}
+            a1 = requests.delete(Urls.DELETE_USER, headers=header)
+            print(a1.status_code)
+            print(a1.json())
+
+
 # # класс содержит методы для работы с заказом
 # class Order:
 #
