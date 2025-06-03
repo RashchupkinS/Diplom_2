@@ -6,15 +6,14 @@ email_domains = [
 ]
 
 # класс содержит коды и сообщения ответов на запросы
-
 class TestMessages:
 
     USER_SUCCESSFUL_CREATION = {"code": 200, "message": True}
     USER_LOGIN_ALREADY_IN_USE = {"code": 403, "message": False}
     USER_NOT_ENOUGH_REGISTER_DATA = {"code": 403, "message": False}
     USER_SUCCESSFUL_AUTHORIZATION = {"code": 200, "message": True}
-    # COURIER_NOT_ENOUGH_AUTHORIZATION_DATA = {"code": 400, "message": "Недостаточно данных для входа"}
-    # COURIER_ACCOUNT_NOT_FOUND = {"code": 404, "message": "Учетная запись не найдена"}
+    USER_NOT_ENOUGH_AUTHORIZATION_DATA = {"code": 401, "message": False}
+    USER_ACCOUNT_NOT_FOUND = {"code": 401, "message": False}
     USER_DELETE = {"code": 202, "message": True}
     #
     # ORDER_SUCCESSFUL_CREATION = {"code": 201, "message": "track"}
@@ -22,15 +21,14 @@ class TestMessages:
 
 
 # переменная содержит параметры которые можно исключить при попытке регистрации без определённого параметра
-EXCLUDE_PARAMETERS = {
-    "email": "email",
-    "password": "password",
-    "name": "name"
-}
+exclude_register_parameters = ["email", "password", "name"]
+
+# переменная содержит параметры которые можно исключить при попытке авторизации без определённого параметра
+exclude_login_parameters = ["email", "password"]
+
+# переменная содержит параметры которые можно изменить при попытке авторизации с изменённым параметром
+change_login_parameters = ["email", "password"]
 
 
-# переменная содержит параметры которые можно исключить при попытке регистрации без определённого параметра
-exclude_parameters = ["email",
-                      "password",
-                      "name"
-]
+
+

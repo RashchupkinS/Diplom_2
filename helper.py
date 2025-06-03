@@ -98,14 +98,14 @@ class User:
         return data_copy
 
 
-#     # статический метод изменяет значение регистрационных данных по ключу(исключает последний символ)
-#     @staticmethod
-#     def change_parameter_value_in_courier_registration_data(registered_courier_data, change):
-#         data_copy = copy.deepcopy(registered_courier_data)
-#         data_copy[change] = data_copy[change][:-1]
-#         return data_copy
-#
-#
+    # статический метод изменяет значение регистрационных данных по ключу(исключает последний символ)
+    @staticmethod
+    def change_parameter_value_in_user_registration_data(registered_user_data, change):
+        data_copy = copy.deepcopy(registered_user_data)
+        data_copy[change] = data_copy[change][:-1]
+        return data_copy
+
+
     # статический метод авторизует курьера
     @staticmethod
     @allure.step('Авторизация пользователя')

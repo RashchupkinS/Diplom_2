@@ -1,7 +1,7 @@
 import allure
 import pytest
 from helper import User
-from data import TestMessages, exclude_parameters #EXCLUDE_PARAMETERS#, CHANGE_PARAMETERS
+from data import TestMessages, exclude_register_parameters, exclude_login_parameters, change_login_parameters
 
 
 
@@ -24,12 +24,47 @@ class TestCreateUser:
         assert response.json()["success"] == TestMessages.USER_LOGIN_ALREADY_IN_USE["message"]
 
 
-    @pytest.mark.parametrize("parameter", exclude_parameters)
-    @allure.title(f'Регистрация пользователя - json не содержит поля - {exclude_parameters}')
-    def test_create_user_without_email_field_not_created(self, random_user_data, parameter):
+    @pytest.mark.parametrize("parameter", exclude_register_parameters)
+    @allure.title(f'Регистрация пользователя - json не содержит поля - {exclude_register_parameters}')
+    def test_create_user_without_one_of_the_field_not_created(self, random_user_data, parameter):
         payload = User.excludes_parameter_from_user_registration_data(random_user_data,
                                                                             exclude=parameter)
         response = User.register_user(payload)
         assert response.status_code == TestMessages.USER_NOT_ENOUGH_REGISTER_DATA["code"]
         assert response.json()["success"] == TestMessages.USER_NOT_ENOUGH_REGISTER_DATA["message"]
+
+
+# класс с тестами для авторизации пользователя
+class TestLoginUser:
+
+    @allure.title('Авторизация пользователя')
+    def test_login_user_successful_authorized(self, random_user_data):
+        User.register_user(random_user_data)
+        response = User.login_user(random_user_data)
+        assert response.status_code == TestMessages.USER_SUCCESSFUL_AUTHORIZATION["code"]
+        assert response.json()["success"] == TestMessages.USER_SUCCESSFUL_AUTHORIZATION["message"]
+
+
+    @pytest.mark.parametrize("parameter", exclude_login_parameters)
+    @allure.title(f'Авторизация пользователя - json не содержит поля - {exclude_login_parameters}')
+    def test_login_user_without_one_of_the_field_not_authorized(self, random_user_data, parameter):
+        User.register_user(random_user_data)
+        payload = User.excludes_parameter_from_user_registration_data(random_user_data,
+                                                                            exclude=parameter)
+        response = User.login_user(payload)
+        assert response.status_code == TestMessages.USER_NOT_ENOUGH_AUTHORIZATION_DATA["code"]
+        assert response.json()["success"] == TestMessages.USER_NOT_ENOUGH_AUTHORIZATION_DATA["message"]
+
+
+    @pytest.mark.parametrize("parameter", change_login_parameters)
+    @allure.title('Авторизация пользователя если неправильно указать {parameter}')
+    def test_user_with_non_existent_login_or_password_not_authorized(self, random_user_data, parameter):
+        User.register_user(random_user_data)
+        payload = User.change_parameter_value_in_user_registration_data(random_user_data,
+                                                                              change=parameter)
+        response = User.login_user(payload)
+        assert response.status_code == TestMessages.USER_ACCOUNT_NOT_FOUND["code"]
+        assert response.json()["success"] == TestMessages.USER_ACCOUNT_NOT_FOUND["message"]
+
+
 
