@@ -6,7 +6,7 @@ import random
 import string
 from urls import Urls
 from faker import Faker
-from data import email_domains, TestMessages, EXCLUDE_PARAMETERS #  color_selection, ,,
+from data import email_domains, TestMessages #  color_selection, ,,
 
 
 
@@ -110,8 +110,20 @@ class User:
     @staticmethod
     @allure.step('Авторизация пользователя')
     def login_user(registered_user_data):
-        del registered_user_data[EXCLUDE_PARAMETERS["name"]]
+        del registered_user_data["name"]
         response = requests.post(url=Urls.LOGIN_USER, json=registered_user_data)
+        return response
+
+
+    # статический метод изменяет данные курьера
+    @staticmethod
+    @allure.step('Авторизация пользователя')
+    def edit_authorized_user(registered_user_data, changed_data_of_registered_user):
+        response = User.login_user(registered_user_data)
+        if response.status_code == TestMessages.USER_SUCCESSFUL_AUTHORIZATION["code"]:
+            user_access_token = response.json()["accessToken"]
+            header = {"Authorization": user_access_token}
+            response = requests.patch(url=Urls.EDIT_USER, headers=header, json=changed_data_of_registered_user)
         return response
 
 
@@ -124,8 +136,8 @@ class User:
             user_access_token = response.json()["accessToken"]
             header = {"Authorization": user_access_token}
             a1 = requests.delete(Urls.DELETE_USER, headers=header)
-            print(a1.status_code)
-            print(a1.json())
+
+            print(a1.status_code, a1.json())
 
 
 # # класс содержит методы для работы с заказом

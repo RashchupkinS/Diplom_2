@@ -1,7 +1,9 @@
 import allure
 import pytest
 from helper import User
-from data import TestMessages, exclude_register_parameters, exclude_login_parameters, change_login_parameters
+from data import (TestMessages, exclude_register_parameters, exclude_login_parameters,
+                  change_login_parameters, change_authorize_parameters)
+import copy
 
 
 
@@ -65,6 +67,22 @@ class TestLoginUser:
         response = User.login_user(payload)
         assert response.status_code == TestMessages.USER_ACCOUNT_NOT_FOUND["code"]
         assert response.json()["success"] == TestMessages.USER_ACCOUNT_NOT_FOUND["message"]
+
+
+# класс с тестами для изменения данных пользователя
+class TestEditUser:
+
+    @pytest.mark.parametrize("parameter", change_authorize_parameters)
+    @allure.title('Изменение данных пользователя с авторизацией')
+    def test_edit_user_data_user_with_authorization_successful_change(self, random_user_data, parameter):
+        User.register_user(random_user_data)
+        random_user_data_copy = copy.deepcopy(random_user_data)
+        User.login_user(random_user_data)
+        payload = User.change_parameter_value_in_user_registration_data(random_user_data_copy,
+                                                                        change=parameter)
+        response =  User.edit_authorized_user(random_user_data_copy, payload)
+        assert response.status_code == TestMessages.USER_SUCCESSFUL_EDIT_DATA["code"]
+        assert response.json()["success"] == TestMessages.USER_SUCCESSFUL_EDIT_DATA["message"]
 
 
 

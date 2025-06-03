@@ -5,6 +5,7 @@ class Urls:
     CREATE_USER = MAIN_URL + '/api/auth/register'
     DELETE_USER = MAIN_URL + '/api/auth/user'
     LOGIN_USER = MAIN_URL + '/api/auth/login'
+    EDIT_USER = MAIN_URL + '/api/auth/user'
 
     # # ссылки для работы с заказом
     # CREATE_ORDER = MAIN_URL + '/api/v1/orders'
