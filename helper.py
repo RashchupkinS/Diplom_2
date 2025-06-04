@@ -110,20 +110,18 @@ class User:
     @staticmethod
     @allure.step('Авторизация пользователя')
     def login_user(registered_user_data):
-        del registered_user_data["name"]
-        response = requests.post(url=Urls.LOGIN_USER, json=registered_user_data)
+        registered_user_data_for_login = copy.deepcopy(registered_user_data)
+        del registered_user_data_for_login["name"]
+        response = requests.post(url=Urls.LOGIN_USER, json=registered_user_data_for_login)
         return response
 
 
     # статический метод изменяет данные курьера
     @staticmethod
     @allure.step('Авторизация пользователя')
-    def edit_authorized_user(registered_user_data, changed_data_of_registered_user):
-        response = User.login_user(registered_user_data)
-        if response.status_code == TestMessages.USER_SUCCESSFUL_AUTHORIZATION["code"]:
-            user_access_token = response.json()["accessToken"]
-            header = {"Authorization": user_access_token}
-            response = requests.patch(url=Urls.EDIT_USER, headers=header, json=changed_data_of_registered_user)
+    def edit_user(token, changed_data_of_registered_user):
+        header = {'Authorization': token}
+        response = requests.patch(url=Urls.EDIT_USER, headers=header, json=changed_data_of_registered_user)
         return response
 
 
@@ -133,11 +131,16 @@ class User:
     def delete_user(registered_user_data):
         response = User.login_user(registered_user_data)
         if response.status_code == TestMessages.USER_SUCCESSFUL_AUTHORIZATION["code"]:
-            user_access_token = response.json()["accessToken"]
-            header = {"Authorization": user_access_token}
+            token = response.json()["accessToken"]
+            header = {'Authorization': token}
             a1 = requests.delete(Urls.DELETE_USER, headers=header)
-
+            # print(registered_user_data)
             print(a1.status_code, a1.json())
+
+
+    @staticmethod
+    def get_token(response):
+        return response.json()["accessToken"]
 
 
 # # класс содержит методы для работы с заказом
