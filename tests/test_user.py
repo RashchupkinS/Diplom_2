@@ -159,6 +159,7 @@ class TestEditUser:
         random_user_data_login = copy.deepcopy(random_user_data)
         login_response = User.login_user(random_user_data_login)
         token = User.get_token(login_response)
+        print(token)
         print(random_user_data)
         response =  User.edit_user(token, random_user_data)
         assert response.status_code == TestMessages.USER_DO_NOT_UPDATE_DATA_DUPLICATE_EMAIL["code"]

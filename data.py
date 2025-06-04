@@ -19,7 +19,7 @@ class TestMessages:
     USER_DO_NOT_UPDATE_DATA_NOT_AUTHORIZED = {"code": 401, "success": False, "message": "You should be authorised"}
     USER_DO_NOT_UPDATE_DATA_DUPLICATE_EMAIL = {"code": 403, "success": False, "message": "User with such email already exists"}
     #
-    # ORDER_SUCCESSFUL_CREATION = {"code": 201, "message": "track"}
+    ORDER_SUCCESSFUL_CREATION = {"code": 200, "success": True, "message": "order"}
     # ORDER_GET_LIST_OF_ORDERS = {"code": 200, "message": "orders"}
 
 
@@ -33,6 +33,9 @@ exclude_login_parameters = ["email", "password"]
 change_login_parameters = ["email", "password"]
 
 change_authorize_parameters = ["email", "password", "name"]
+
+
+
 
 
 

@@ -82,7 +82,7 @@ class Generator:
 # класс содержит методы для работы с пользователем
 class User:
 
-    # статический метод регистрирует нового курьера
+    # статический метод регистрирует нового пользователя
     @staticmethod
     @allure.step('Регистрация пользователя')
     def register_user(user_data):
@@ -106,7 +106,7 @@ class User:
         return data_copy
 
 
-    # статический метод авторизует курьера
+    # статический метод авторизует пользователя
     @staticmethod
     @allure.step('Авторизация пользователя')
     def login_user(registered_user_data):
@@ -116,7 +116,7 @@ class User:
         return response
 
 
-    # статический метод изменяет данные курьера
+    # статический метод изменяет данные пользователя
     @staticmethod
     @allure.step('Авторизация пользователя')
     def edit_user(token, changed_data_of_registered_user):
@@ -125,7 +125,7 @@ class User:
         return response
 
 
-    # статический метод удаляет курьера после теста
+    # статический метод удаляет пользователя после теста
     @staticmethod
     @allure.step('Удаление пользователя')
     def delete_user(registered_user_data):
@@ -143,18 +143,23 @@ class User:
         return response.json()["accessToken"]
 
 
-# # класс содержит методы для работы с заказом
-# class Order:
-#
-#     # статический метод создаёт заказ
-#     # и добавляет к json трек заказа по ключу DELETE для дальнейшего удаления заказа после теста
-#     @staticmethod
-#     @allure.step('Создать заказ')
-#     def create_order(order_data):
-#         response = requests.post(url=Urls.CREATE_ORDER, json=order_data)
-#         if response.status_code == TestMessages.ORDER_SUCCESSFUL_CREATION["code"]:
-#             order_data["delete"] = response.json()["track"]
-#         return response
+# класс содержит методы для работы с заказом
+class Order:
+
+    # статический метод создаёт заказ
+    @staticmethod
+    @allure.step('Создать заказ')
+    def create_order(order_data):
+        response = requests.post(url=Urls.CREATE_ORDER, json=order_data)
+        return response
+
+
+    @staticmethod
+    @allure.step('Получение списка ингредиентов')
+    def get_ingredients():
+        response = requests.get(Urls.INGREDIENTS)
+        return response.json()['data']
+
 #
 #
 #     # статический метод удаляет заказ после теста
@@ -172,5 +177,9 @@ class User:
 #     def get_list_of_orders():
 #         return requests.get(url=Urls.GET_LIST_OF_ORDERS)
 
+
+ing = Order.get_ingredients()
+
+print(ing)
 
 
