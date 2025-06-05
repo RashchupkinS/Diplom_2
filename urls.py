@@ -10,7 +10,7 @@ class Urls:
     # # ссылки для работы с заказом
     CREATE_ORDER = MAIN_URL + '/api/orders'
     INGREDIENTS =  MAIN_URL + '/api/ingredients'
-    # CANCEL_ORDER = MAIN_URL + '/api/v1/orders/cancel'
+    GET_USER_ORDER = MAIN_URL + '/api/orders'
     # GET_LIST_OF_ORDERS = MAIN_URL + '/api/v1/orders'
 
 

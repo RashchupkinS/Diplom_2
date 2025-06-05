@@ -20,19 +20,20 @@ class TestMessages:
     USER_DO_NOT_UPDATE_DATA_DUPLICATE_EMAIL = {"code": 403, "success": False, "message": "User with such email already exists"}
     #
     ORDER_SUCCESSFUL_CREATION = {"code": 200, "success": True, "message": "order"}
-    # ORDER_GET_LIST_OF_ORDERS = {"code": 200, "message": "orders"}
+    ORDER_NOT_CREATED_WRONG_HASH = {"code": 500, "text": "Internal Server Error"}
+    ORDER_NOT_CREATED_NO_INGREDIENTS = {"code": 400, "success": False, "message": "Ingredient ids must be provided"}
+    GET_ORDER_NOT_AUTHORIZED_USER = {"code": 401, "success": False, "message": "You should be authorised"}
+    GET_ORDER_AUTHORIZED_USER = {"code": 200, "success": True, "message": "orders"}
 
 
 # переменная содержит параметры которые можно исключить при попытке регистрации без определённого параметра
-exclude_register_parameters = ["email", "password", "name"]
+register_parameters = ["email", "password", "name"]
 
 # переменная содержит параметры которые можно исключить при попытке авторизации без определённого параметра
-exclude_login_parameters = ["email", "password"]
+login_parameters = ["email", "password"]
 
-# переменная содержит параметры которые можно изменить при попытке авторизации с изменённым параметром
-change_login_parameters = ["email", "password"]
 
-change_authorize_parameters = ["email", "password", "name"]
+
 
 
 

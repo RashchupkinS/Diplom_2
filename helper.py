@@ -1,12 +1,10 @@
 import copy
-
 import requests
 import allure
 import random
 import string
 from urls import Urls
-from faker import Faker
-from data import email_domains, TestMessages #  color_selection, ,,
+from data import email_domains, TestMessages
 
 
 
@@ -20,14 +18,6 @@ class Generator:
         letters = string.ascii_lowercase
         random_string = ''.join(random.choice(letters) for _ in range(length))
         return random_string
-
-
-    # # статический метод генерирует случайную последовательность русских букв в нижнем регистре
-    # @staticmethod
-    # def generate_random_russian_string(length):
-    #     letters = [chr(i) for i in range(1072, 1105)]
-    #     random_string = ''.join(random.choice(letters) for _ in range(length))
-    #     return random_string
 
 
     # статический метод генерирует случайную последовательность цифр в формате строки
@@ -59,24 +49,6 @@ class Generator:
             "name": name
         }
         return payload
-
-
-    # # статический метод генерирует заказ со случайными валидными данными
-    # @staticmethod
-    # def generate_random_order_data():
-    #     faker = Faker(locale="ru_RU")
-    #     order_data = {
-    #         "firstName": Generator.generate_random_russian_string(10),
-    #         "lastName": Generator.generate_random_russian_string(15),
-    #         "address": Generator.generate_random_russian_string(20),
-    #         "metroStation": faker.random_int(min=1, max=10, step=1),
-    #         "phone": f"8{Generator.generate_random_numbers_as_string(10)}",
-    #         "rentTime": faker.random_int(min=1, max=6, step=1),
-    #         "deliveryDate": faker.date_between(start_date='+1d', end_date='+5d').isoformat(),
-    #         "comment": Generator.generate_random_russian_string(5),
-    #         "color": random.choice(color_selection)
-    #     }
-    #     return order_data
 
 
 # класс содержит методы для работы с пользователем
@@ -134,12 +106,12 @@ class User:
             token = response.json()["accessToken"]
             header = {'Authorization': token}
             a1 = requests.delete(Urls.DELETE_USER, headers=header)
-            # print(registered_user_data)
+
             print(a1.status_code, a1.json())
 
 
     @staticmethod
-    def get_token(response):
+    def get_access_token(response):
         return response.json()["accessToken"]
 
 
@@ -160,26 +132,17 @@ class Order:
         response = requests.get(Urls.INGREDIENTS)
         return response.json()['data']
 
-#
-#
-#     # статический метод удаляет заказ после теста
-#     @staticmethod
-#     def delete_order_after_test(order_data):
-#         track = order_data["delete"]
-#         requests.put(url=Urls.CANCEL_ORDER, json={
-#             "track": track
-#         })
-#
-#
-#     # статический метод получает список заказов
-#     @staticmethod
-#     @allure.step('Получить список заказов')
-#     def get_list_of_orders():
-#         return requests.get(url=Urls.GET_LIST_OF_ORDERS)
+
+    @staticmethod
+    @allure.step('Изменение хеша ингредиентов')
+    def change_ingredients_hash(ingredients):
+        return [item[:-1] for item in ingredients]
 
 
-ing = Order.get_ingredients()
-
-print(ing)
-
+    # статический метод создаёт заказ
+    @staticmethod
+    @allure.step('')
+    def get_order():
+        response = requests.get(url=Urls.GET_USER_ORDER)
+        return response
 

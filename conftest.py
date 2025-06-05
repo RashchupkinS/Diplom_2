@@ -1,8 +1,6 @@
 import random
-
 import pytest
 from helper import Generator, User, Order
-import copy
 
 
 
@@ -28,10 +26,3 @@ def random_ingredients():
             ]
 
 
-
-# фикстура генерирует случайные данные заказа, передаёт их в тест и удаляет заказ после теста
-@pytest.fixture()
-def random_order_data():
-    random_order_data = Generator.generate_random_order_data()
-    yield random_order_data
-    Order.delete_order_after_test(random_order_data)
