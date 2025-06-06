@@ -1,9 +1,8 @@
-import allure
 import pytest
+import allure
 from helper import User
-from data import (TestMessages, register_parameters, login_parameters)
+from data import TestMessages, register_parameters, login_parameters
 import copy
-
 
 
 
@@ -28,7 +27,7 @@ class TestCreateUser:
 
 
     @pytest.mark.parametrize("parameter", register_parameters)
-    @allure.title(f'Регистрация пользователя - json не содержит поля - {register_parameters}')
+    @allure.title('Регистрация пользователя, если не указать один из параметров - поле {parameter}')
     def test_create_user_without_one_of_the_field_not_created(self, random_user_data, parameter):
         payload = User.excludes_parameter_from_user_registration_data(random_user_data,
                                                                             exclude=parameter)
@@ -51,7 +50,7 @@ class TestLoginUser:
 
 
     @pytest.mark.parametrize("parameter", login_parameters)
-    @allure.title(f'Авторизация пользователя - json не содержит поля - {login_parameters}')
+    @allure.title('Авторизация пользователя - json не содержит поля - {parameter}')
     def test_login_user_without_one_of_the_field_not_authorized(self, random_user_data, parameter):
         User.register_user(random_user_data)
         payload = User.excludes_parameter_from_user_registration_data(random_user_data,
@@ -63,8 +62,8 @@ class TestLoginUser:
 
 
     @pytest.mark.parametrize("parameter", login_parameters)
-    @allure.title('Авторизация пользователя если неправильно указать {parameter}')
-    def test_user_with_non_existent_login_or_password_not_authorized(self, random_user_data, parameter):
+    @allure.title('Авторизация пользователя, если неправильно указать {parameter}')
+    def test_user_with_non_existent_email_or_password_not_authorized(self, random_user_data, parameter):
         User.register_user(random_user_data)
         payload = User.change_parameter_value_in_user_registration_data(random_user_data,
                                                                               change=parameter)
@@ -78,16 +77,17 @@ class TestLoginUser:
 class TestEditUser:
 
     @pytest.mark.parametrize("parameter", register_parameters)
-    @allure.title('Изменение данных пользователя с авторизацией')
-    def test_edit_user_data_user_with_authorization_successful_update(self, random_user_data, parameter):
+    @allure.title('Изменение данных пользователя - изменить поле {parameter}, пользователь авторизирован')
+    def test_edit_user_data_user_authorized_successful_update(self, random_user_data, parameter):
         User.register_user(random_user_data)
-        random_user_data_login = copy.deepcopy(random_user_data)
-        login_response = User.login_user(random_user_data_login)
+        random_user_data_for_login = copy.deepcopy(random_user_data)
+        login_response = User.login_user(random_user_data_for_login)
         token = User.get_access_token(login_response)
         updated_user_data = User.change_parameter_value_in_user_registration_data(random_user_data,
-                                                                        change=parameter)
+                                                                                  change=parameter)
+        # обновление данных пользователя необходимо для удаления пользователя после теста
         random_user_data.update(updated_user_data)
-        response =  User.edit_user(token, random_user_data)
+        response =  User.edit_user(random_user_data,token)
         assert response.status_code == TestMessages.USER_SUCCESSFUL_UPDATE_DATA["code"]
         assert response.json()["success"] == TestMessages.USER_SUCCESSFUL_UPDATE_DATA["success"]
         assert TestMessages.USER_SUCCESSFUL_UPDATE_DATA["message"] in response.json()
@@ -96,73 +96,61 @@ class TestEditUser:
 # по этому тесту задать вопрос
 
     @pytest.mark.parametrize("parameter", register_parameters)
-    @allure.title('Изменение данных пользователя с авторизацией')
-    def test_edit_user_data_with_authorization_without_one_of_the_field_successful_update(self, random_user_data, parameter):
+    @allure.title('Изменение данных пользователя - исключить поле {parameter}, пользователь авторизирован')
+    def test_edit_user_data_authorized_user_without_one_of_the_field_successful_update(self, random_user_data, parameter):
         User.register_user(random_user_data)
-        random_user_data_login = copy.deepcopy(random_user_data)
-        login_response = User.login_user(random_user_data_login)
+        random_user_data_for_login = copy.deepcopy(random_user_data)
+        login_response = User.login_user(random_user_data_for_login)
         token = User.get_access_token(login_response)
         updated_user_data = User.excludes_parameter_from_user_registration_data(random_user_data,
                                                                                 exclude=parameter)
-        response =  User.edit_user(token, updated_user_data)
+        # обновление данных пользователя необходимо для удаления пользователя после теста
+        random_user_data.update(updated_user_data)
+        response =  User.edit_user(updated_user_data, token)
         assert response.status_code == TestMessages.USER_SUCCESSFUL_UPDATE_DATA["code"]
         assert response.json()["success"] == TestMessages.USER_SUCCESSFUL_UPDATE_DATA["success"]
         assert TestMessages.USER_SUCCESSFUL_UPDATE_DATA["message"] in response.json()
 
 
-# узнать про поведение в тесте
-
     @pytest.mark.parametrize("parameter", register_parameters)
-    @allure.title('Изменение данных пользователя без авторизации')
-    def test_edit_user_data_without_authorization_data_not_updated(self, random_user_data, parameter):
-        registration_response = User.register_user(random_user_data)
-        token = User.get_access_token(registration_response)
-        updated_user_data = User.change_parameter_value_in_user_registration_data(random_user_data,
-                                                                        change=parameter)
-        response =  User.edit_user(token, updated_user_data)
-        random_user_data.update(updated_user_data)
-        print(random_user_data)
-        assert response.status_code == TestMessages.USER_DO_NOT_UPDATE_DATA_NOT_AUTHORIZED["code"]
-        assert response.json()["success"] == TestMessages.USER_DO_NOT_UPDATE_DATA_NOT_AUTHORIZED["success"]
-        assert TestMessages.USER_DO_NOT_UPDATE_DATA_NOT_AUTHORIZED["message"] in response.json()
-
-
-# узнать поведение и необходимость теста
-
-    @pytest.mark.parametrize("parameter", register_parameters)
-    @allure.title('Изменение данных пользователя без авторизации')
-    def test_edit_user_data_without_authorization_without_one_of_the_field_data_not_updated(self, random_user_data, parameter):
-        print(random_user_data)
-        registration_response = User.register_user(random_user_data)
-        token = User.get_access_token(registration_response)
-        updated_user_data = User.excludes_parameter_from_user_registration_data(random_user_data,
-                                                                        exclude=parameter)
-        print(updated_user_data)
-        random_user_data.update(updated_user_data)
-        print(random_user_data)
-        print(updated_user_data)
-        response =  User.edit_user(token, updated_user_data)
-        print(updated_user_data)
-        print(random_user_data)
-        assert response.status_code == TestMessages.USER_DO_NOT_UPDATE_DATA_NOT_AUTHORIZED["code"]
-        assert response.json()["success"] == TestMessages.USER_DO_NOT_UPDATE_DATA_NOT_AUTHORIZED["success"]
-        assert TestMessages.USER_DO_NOT_UPDATE_DATA_NOT_AUTHORIZED["message"] in response.json()
-
-
-    @allure.title('Изменение данных пользователя если ввести повторно email')
-    def test_edit_user_data_authorized_user_duplicate_email_data_not_updated(self, random_user_data):
+    @allure.title('Изменение данных пользователя - изменить поле {parameter}, пользователь НЕ авторизирован')
+    def test_edit_user_data_not_authorized_user_data_not_updated_11111(self, random_user_data, parameter):
         User.register_user(random_user_data)
-        print(random_user_data)
-        random_user_data_login = copy.deepcopy(random_user_data)
-        login_response = User.login_user(random_user_data_login)
+        updated_user_data = User.change_parameter_value_in_user_registration_data(random_user_data,
+                                                                                  change=parameter)
+        response =  User.edit_user(updated_user_data)
+        assert response.status_code == TestMessages.USER_DO_NOT_UPDATE_DATA_NOT_AUTHORIZED["code"]
+        assert response.json()["success"] == TestMessages.USER_DO_NOT_UPDATE_DATA_NOT_AUTHORIZED["success"]
+        assert response.json()["message"] == TestMessages.USER_DO_NOT_UPDATE_DATA_NOT_AUTHORIZED["message"]
+
+
+    @pytest.mark.parametrize("parameter", register_parameters)
+    @allure.title('Изменение данных пользователя - исключить поле {parameter}, пользователь НЕ авторизирован')
+    def test_edit_user_data_not_authorized_user_without_one_of_the_field_data_not_updated(self, random_user_data, parameter):
+        User.register_user(random_user_data)
+        updated_user_data = User.excludes_parameter_from_user_registration_data(random_user_data,
+                                                                                  exclude=parameter)
+        response =  User.edit_user(updated_user_data)
+        assert response.status_code == TestMessages.USER_DO_NOT_UPDATE_DATA_NOT_AUTHORIZED["code"]
+        assert response.json()["success"] == TestMessages.USER_DO_NOT_UPDATE_DATA_NOT_AUTHORIZED["success"]
+        assert response.json()["message"] == TestMessages.USER_DO_NOT_UPDATE_DATA_NOT_AUTHORIZED["message"]
+
+
+    @allure.title('Данные пользователя не изменяются, если новый email есть у существующего пользователя')
+    def test_edit_user_data_authorized_user_duplicate_email_data_not_updated(self, random_user_data, random_user_data_2):
+        User.register_user(random_user_data)
+        User.register_user(random_user_data_2)
+        random_user_data_for_login = copy.deepcopy(random_user_data)
+        login_response = User.login_user(random_user_data_for_login)
         token = User.get_access_token(login_response)
-        print(token)
-        print(random_user_data)
-        response =  User.edit_user(token, random_user_data)
+        data_for_update = {
+            "email": random_user_data_2["email"],
+            "password": random_user_data["password"],
+            "name": random_user_data["name"]
+        }
+        response =  User.edit_user(data_for_update, token)
         assert response.status_code == TestMessages.USER_DO_NOT_UPDATE_DATA_DUPLICATE_EMAIL["code"]
         assert response.json()["success"] == TestMessages.USER_DO_NOT_UPDATE_DATA_DUPLICATE_EMAIL["success"]
-        assert TestMessages.USER_DO_NOT_UPDATE_DATA_DUPLICATE_EMAIL["message"] in response.json()
-
-
+        assert response.json()["message"] == TestMessages.USER_DO_NOT_UPDATE_DATA_DUPLICATE_EMAIL["message"]
 
 

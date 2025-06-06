@@ -14,5 +14,3 @@ class Urls:
     # GET_LIST_OF_ORDERS = MAIN_URL + '/api/v1/orders'
 
 
-
-

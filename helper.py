@@ -8,7 +8,6 @@ from data import email_domains, TestMessages
 
 
 
-
 # класс содержит генераторы случайных валидных данных
 class Generator:
 
@@ -28,7 +27,7 @@ class Generator:
         return random_numbers
 
 
-    # статический метод генерирует случайную последовательность цифр в формате строки
+    # статический метод выбирает случаным образом домен из списка доменов
     @staticmethod
     def generate_random_email_domain():
         random_domain = random.choice(email_domains)
@@ -88,31 +87,43 @@ class User:
         return response
 
 
-    # статический метод изменяет данные пользователя
+    # статический метод получает токен из запроса
     @staticmethod
-    @allure.step('Авторизация пользователя')
-    def edit_user(token, changed_data_of_registered_user):
-        header = {'Authorization': token}
-        response = requests.patch(url=Urls.EDIT_USER, headers=header, json=changed_data_of_registered_user)
+    def get_access_token(response):
+        return response.json()["accessToken"]
+
+    #
+    # # статический метод изменяет данные пользователя
+    # @staticmethod
+    # @allure.step('Изменение регистрационных данных пользователя')
+    # def edit_user(token, changed_data_of_registered_user):
+    #     header = {'Authorization': token}
+    #     response = requests.patch(url=Urls.EDIT_USER, headers=header, json=changed_data_of_registered_user)
+    #     return response
+
+        # статический метод изменяет данные пользователя
+    @staticmethod
+    @allure.step('Изменение регистрационных данных пользователя')
+    def edit_user(changed_data_of_registered_user, token=None):
+        if token:
+            header = {'Authorization': token}
+            response = requests.patch(url=Urls.EDIT_USER, headers=header, json=changed_data_of_registered_user)
+        else:
+            response = requests.patch(url=Urls.EDIT_USER, json=changed_data_of_registered_user)
         return response
 
 
     # статический метод удаляет пользователя после теста
     @staticmethod
-    @allure.step('Удаление пользователя')
+    @allure.step('Удаление пользователя после теста')
     def delete_user(registered_user_data):
-        response = User.login_user(registered_user_data)
-        if response.status_code == TestMessages.USER_SUCCESSFUL_AUTHORIZATION["code"]:
-            token = response.json()["accessToken"]
-            header = {'Authorization': token}
-            a1 = requests.delete(Urls.DELETE_USER, headers=header)
-
-            print(a1.status_code, a1.json())
-
-
-    @staticmethod
-    def get_access_token(response):
-        return response.json()["accessToken"]
+        with allure.step('Проверка перед удалением, что пользователь существует'):
+            response = User.login_user(registered_user_data)
+            if response.status_code == TestMessages.USER_SUCCESSFUL_AUTHORIZATION["code"]:
+                token = response.json()["accessToken"]
+                header = {'Authorization': token}
+                with allure.step('Запрос удаление пользователя'):
+                    requests.delete(Urls.DELETE_USER, headers=header)
 
 
 # класс содержит методы для работы с заказом
@@ -121,28 +132,38 @@ class Order:
     # статический метод создаёт заказ
     @staticmethod
     @allure.step('Создать заказ')
-    def create_order(order_data):
-        response = requests.post(url=Urls.CREATE_ORDER, json=order_data)
+    def create_order(order_data, token=None):
+        if token:
+            header = {'Authorization': token}
+            response = requests.post(url=Urls.CREATE_ORDER, headers=header, json=order_data)
+        else:
+            response = requests.post(url=Urls.CREATE_ORDER, json=order_data)
         return response
 
 
+    # статический метод получает список ингредиентов
     @staticmethod
-    @allure.step('Получение списка ингредиентов')
     def get_ingredients():
         response = requests.get(Urls.INGREDIENTS)
         return response.json()['data']
 
 
+    # статический метод уменьшает код хеша на один последний символ
     @staticmethod
     @allure.step('Изменение хеша ингредиентов')
     def change_ingredients_hash(ingredients):
         return [item[:-1] for item in ingredients]
 
 
-    # статический метод создаёт заказ
+    # статический метод получает данные по заказу
     @staticmethod
-    @allure.step('')
-    def get_order():
-        response = requests.get(url=Urls.GET_USER_ORDER)
+    @allure.step('Получить данные по заказу пользователя')
+    def get_users_order(token=None):
+        if token:
+            header = {'Authorization': token}
+            response = requests.get(url=Urls.GET_USER_ORDER, headers=header)
+        else:
+            response = requests.get(url=Urls.GET_USER_ORDER)
         return response
+
 
