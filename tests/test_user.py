@@ -93,8 +93,6 @@ class TestEditUser:
         assert TestMessages.USER_SUCCESSFUL_UPDATE_DATA["message"] in response.json()
 
 
-# по этому тесту задать вопрос
-
     @pytest.mark.parametrize("parameter", register_parameters)
     @allure.title('Изменение данных пользователя - исключить поле {parameter}, пользователь авторизирован')
     def test_edit_user_data_authorized_user_without_one_of_the_field_successful_update(self, random_user_data, parameter):

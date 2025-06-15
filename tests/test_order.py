@@ -28,7 +28,6 @@ class TestCreateOrder:
         assert TestMessages.ORDER_SUCCESSFUL_CREATION["message"] in response.json()
 
 
-# здесь нужно по документации посмотреть без булок тоже??????
     @allure.title('Создание заказа без ингредиентов')
     def test_create_order_authorized_user_order_without_ingredients_not_created(self, random_user_data):
         User.register_user(random_user_data)

@@ -30,7 +30,7 @@ def random_ingredients():
         random_ingredient_1 = random.choice(ingredients)
         random_ingredient_2 = random.choice(ingredients)
         random_ingredient_3 = random.choice(ingredients)
-        return [random_ingredient_1["_id"],
+        yield [random_ingredient_1["_id"],
                 random_ingredient_2["_id"],
                 random_ingredient_3["_id"]
         ]

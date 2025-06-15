@@ -27,7 +27,7 @@ class Generator:
         return random_numbers
 
 
-    # статический метод выбирает случаным образом домен из списка доменов
+    # статический метод выбирает случайным образом домен из списка доменов
     @staticmethod
     def generate_random_email_domain():
         random_domain = random.choice(email_domains)
@@ -92,16 +92,8 @@ class User:
     def get_access_token(response):
         return response.json()["accessToken"]
 
-    #
-    # # статический метод изменяет данные пользователя
-    # @staticmethod
-    # @allure.step('Изменение регистрационных данных пользователя')
-    # def edit_user(token, changed_data_of_registered_user):
-    #     header = {'Authorization': token}
-    #     response = requests.patch(url=Urls.EDIT_USER, headers=header, json=changed_data_of_registered_user)
-    #     return response
 
-        # статический метод изменяет данные пользователя
+    # статический метод изменяет данные пользователя
     @staticmethod
     @allure.step('Изменение регистрационных данных пользователя')
     def edit_user(changed_data_of_registered_user, token=None):
