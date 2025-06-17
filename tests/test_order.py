@@ -17,8 +17,8 @@ class TestCreateOrder:
 
 
     @allure.title('Создание заказа с авторизацией пользователя')
-    def test_create_order_authorized_user_successful_creation(self, random_user_data, random_ingredients):
-        User.register_user(random_user_data)
+    def test_create_order_authorized_user_successful_creation(self, register_user_with_random_user_data, random_ingredients):
+        _, random_user_data = register_user_with_random_user_data
         login_response = User.login_user(random_user_data)
         token = User.get_access_token(login_response)
         payload = {"ingredients": random_ingredients}
@@ -29,8 +29,8 @@ class TestCreateOrder:
 
 
     @allure.title('Создание заказа без ингредиентов')
-    def test_create_order_authorized_user_order_without_ingredients_not_created(self, random_user_data):
-        User.register_user(random_user_data)
+    def test_create_order_authorized_user_order_without_ingredients_not_created(self, register_user_with_random_user_data):
+        _, random_user_data = register_user_with_random_user_data
         login_response = User.login_user(random_user_data)
         token = User.get_access_token(login_response)
         payload = {"ingredients": {}}
@@ -42,8 +42,8 @@ class TestCreateOrder:
 
     @allure.title('Создание заказа с неверным хешем ингредиентов')
     def test_create_order_authorized_user_and_wrong_ingredients_hash_not_created(self,
-                                                                                 random_user_data, random_ingredients):
-        User.register_user(random_user_data)
+                                                        register_user_with_random_user_data, random_ingredients):
+        _, random_user_data = register_user_with_random_user_data
         login_response = User.login_user(random_user_data)
         token = User.get_access_token(login_response)
         changed_ingredients = Order.change_ingredients_hash(random_ingredients)
@@ -65,8 +65,8 @@ class TestGetOrder:
 
 
     @allure.title('Получение данных заказа пользователя, пользователь авторизован')
-    def test_get_user_order_authorized_user_order_data_received(self, random_user_data):
-        User.register_user(random_user_data)
+    def test_get_user_order_authorized_user_order_data_received(self, register_user_with_random_user_data):
+        _, random_user_data = register_user_with_random_user_data
         login_response = User.login_user(random_user_data)
         token = User.get_access_token(login_response)
         response = Order.get_users_order(token=token)

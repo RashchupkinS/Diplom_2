@@ -63,6 +63,7 @@ class User:
 
     # статический метод исключает заданную пару ключ-значение из регистрационных данных
     @staticmethod
+    @allure.step('Исключить часть тестовых данных')
     def excludes_parameter_from_user_registration_data(registered_user_data, exclude):
         data_copy = copy.deepcopy(registered_user_data)
         del data_copy[exclude]
@@ -71,6 +72,7 @@ class User:
 
     # статический метод изменяет значение регистрационных данных по ключу(исключает последний символ)
     @staticmethod
+    @allure.step('Изменить тестовые данные')
     def change_parameter_value_in_user_registration_data(registered_user_data, change):
         data_copy = copy.deepcopy(registered_user_data)
         data_copy[change] = data_copy[change][:-1]
@@ -89,7 +91,9 @@ class User:
 
     # статический метод получает токен из запроса
     @staticmethod
+    @allure.step('Получить токен авторизации')
     def get_access_token(response):
+        allure.attach (str(response.json()), name="Ответ сервера", attachment_type=allure.attachment_type.JSON)
         return response.json()["accessToken"]
 
 
@@ -116,6 +120,9 @@ class User:
                 header = {'Authorization': token}
                 with allure.step('Запрос удаление пользователя'):
                     requests.delete(Urls.DELETE_USER, headers=header)
+            else:
+                with allure.step(f'Пользователь не существует или не авторизован, код ответа: {response.status_code}'):
+                    allure.attach(str(response.json()), name="Ответ сервера", attachment_type=allure.attachment_type.JSON)
 
 
 # класс содержит методы для работы с заказом
@@ -135,6 +142,7 @@ class Order:
 
     # статический метод получает список ингредиентов
     @staticmethod
+    @allure.step('Получить ингредиенты')
     def get_ingredients():
         response = requests.get(Urls.INGREDIENTS)
         return response.json()['data']

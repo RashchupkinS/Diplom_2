@@ -1,0 +1,1 @@
+{'success': True, 'accessToken': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTFjZWYyOWVkMjgwMDAxYjYyNzdhYiIsImlhdCI6MTc1MDE5MTg1OSwiZXhwIjoxNzUwMTkzMDU5fQ.-feS2kTYN79pbSQekry89Aoi9dZtMl478FFHsXMCfJo', 'refreshToken': '5c8adce73ca5049d8ce108c316bdf6601273682f380f127fa1f8af3959e042ed359c1a253498ecca', 'user': {'email': 'azetp554@yandex.ru', 'name': 'novyn'}}

@@ -5,13 +5,19 @@ from helper import Generator, User, Order
 
 
 
-# фикстура генерирует случайные данные пользователя, передаёт их в тест и удаляет пользователя после теста
+
+# фикстура регистрирует нового пользователя и удаляет его после теста
 @pytest.fixture()
-def random_user_data():
+def register_user_with_random_user_data():
     with allure.step('Создание случайных регистрационных данных пользователя'):
         random_user_data = Generator.generate_payload()
-        yield random_user_data
-        User.delete_user(random_user_data)
+        response = User.register_user(random_user_data)
+        if response.status_code == 200:
+            yield response, random_user_data
+            User.delete_user(random_user_data)
+        else:
+            pytest.fail(f"Пользователь не зарегистрирован: {response.status_code}, {response.text}")
+
 
 # фикстура генерирует случайные данные пользователя, передаёт их в тест и удаляет пользователя после теста
 @pytest.fixture()
