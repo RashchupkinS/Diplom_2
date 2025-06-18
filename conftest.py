@@ -23,7 +23,7 @@ def register_user_with_random_user_data():
 @pytest.fixture()
 def random_user_data_2():
     with allure.step('Создание случайных регистрационных данных пользователя'):
-        random_user_data_2= Generator.generate_payload()
+        random_user_data_2 = Generator.generate_payload()
         yield random_user_data_2
         User.delete_user(random_user_data_2)
 
