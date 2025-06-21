@@ -1,0 +1,1 @@
+{'success': True, 'accessToken': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTFjZjE3OWVkMjgwMDAxYjYyNzdlMyIsImlhdCI6MTc1MDE5MTg5NiwiZXhwIjoxNzUwMTkzMDk2fQ.EokWHRQuP1om_7jeSvcoMrk219h64da0c7BPiWgRDZk', 'refreshToken': '4ca010b481f8d6326ee289f8821acd4c630a3e8550a2ce10af5a933e05fbd13e16036684b5efd16c', 'user': {'email': 'liokt907@yandex.ru', 'name': 'fltbl'}}

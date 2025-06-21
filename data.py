@@ -1,0 +1,36 @@
+# список доменов для генерации почтового адреса
+email_domains = [
+                "@yandex.ru",
+                "@gmail.com",
+                "@ya.ru",
+                "@mail.ru"
+]
+
+# класс содержит коды и сообщения ответов на запросы
+class TestMessages:
+
+    USER_SUCCESSFUL_CREATION = {"code": 200, "success": True, "message": "accessToken"}
+    USER_LOGIN_ALREADY_IN_USE = {"code": 403, "success": False, "message": "User already exists"}
+    USER_NOT_ENOUGH_REGISTER_DATA = {"code": 403, "success": False, "message": "Email, password and name are required fields"}
+    USER_SUCCESSFUL_AUTHORIZATION = {"code": 200, "success": True, "message": "accessToken"}
+    USER_NOT_ENOUGH_AUTHORIZATION_DATA = {"code": 401, "success": False, "message": "email or password are incorrect"}
+    USER_ACCOUNT_NOT_FOUND = {"code": 401, "success": False, "message": "email or password are incorrect"}
+    USER_DELETE = {"code": 202, "success": True, "message": "User successfully removed"}
+    USER_SUCCESSFUL_UPDATE_DATA = {"code": 200, "success": True, "message": "user"}
+    USER_DO_NOT_UPDATE_DATA_NOT_AUTHORIZED = {"code": 401, "success": False, "message": "You should be authorised"}
+    USER_DO_NOT_UPDATE_DATA_DUPLICATE_EMAIL = {"code": 403, "success": False, "message": "User with such email already exists"}
+    #
+    ORDER_SUCCESSFUL_CREATION = {"code": 200, "success": True, "message": "order"}
+    ORDER_NOT_CREATED_WRONG_HASH = {"code": 500, "text": "Internal Server Error"}
+    ORDER_NOT_CREATED_NO_INGREDIENTS = {"code": 400, "success": False, "message": "Ingredient ids must be provided"}
+    GET_ORDER_NOT_AUTHORIZED_USER = {"code": 401, "success": False, "message": "You should be authorised"}
+    GET_ORDER_AUTHORIZED_USER = {"code": 200, "success": True, "message": "orders"}
+
+
+# переменная содержит параметры, которые используются при регистрации
+register_parameters = ["email", "password", "name"]
+
+# переменная содержит параметры, которые используются при авторизации
+login_parameters = ["email", "password"]
+
+
